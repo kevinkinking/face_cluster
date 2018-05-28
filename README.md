@@ -5,5 +5,5 @@
 * 进入项目主目录
 * 运行 python ./face_cluster.py imgs_dir
 * 运行示例：
-(./result.png)
+![my](./result.png)
 
