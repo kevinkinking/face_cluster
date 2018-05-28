@@ -6,7 +6,7 @@ from face_feature import lcnn_feature
 import os
 import cv2
 
-def chinese_whispers_cluster(encoding_list, threshold=0.60, iterations=20):
+def chinese_whispers_cluster(encoding_list, threshold=config.face_similar_threshold, iterations=20):
     # Create graph
     nodes = []
     edges = []
@@ -88,11 +88,10 @@ def chinese_whispers_cluster(encoding_list, threshold=0.60, iterations=20):
             if cluster not in clusters:
                 clusters[cluster] = []
             clusters[cluster].append([path,encoding])
-
     # Sort cluster output
-    sorted_clusters = sorted(clusters.values(), key=len, reverse=True)
+    # sorted_clusters = sorted(clusters.values(), key=len, reverse=True)
 
-    return sorted_clusters
+    return clusters.values()
 
 def get_face_features_dic(face_img_dir):
     face_img_names = os.listdir(face_img_dir)
@@ -108,7 +107,8 @@ if __name__ == '__main__':
     lcnn_feature.init_model(config.lcnn_face_prototxt, config.lcnn_face_caffemodel)
     face_features_dic = get_face_features_dic('./data/imgs_test')
     clusted_faces_dic = chinese_whispers_cluster(face_features_dic)
+    # print clusted_faces_dic.values()
     for cluster_item in clusted_faces_dic:
-    	print '--------------------------'
-    	for face_item in cluster_item:
-    		print face_item[0]
+        print '--------------------------'
+        for face_item in cluster_item:
+            print face_item[0]
