@@ -4,13 +4,15 @@ import numpy as np
 import config
 from face_feature import lcnn_feature
 import os
+import cv2
 
-def chinese_whispers_cluster(encoding_list, threshold=0.30, iterations=20):
+def chinese_whispers_cluster(encoding_list, threshold=0.60, iterations=20):
     # Create graph
     nodes = []
     edges = []
-
-    image_paths, encodings = zip(*encoding_list)
+    # image_paths, encodings = zip(*encoding_list)
+    image_paths = encoding_list.keys()
+    encodings = encoding_list.values()
 
     if len(encodings) <= 1:
         return []
@@ -31,7 +33,7 @@ def chinese_whispers_cluster(encoding_list, threshold=0.30, iterations=20):
 
         compare_encodings = encodings[idx+1:]
         similars = lcnn_feature.feature_similar_s(face_encoding_to_check, compare_encodings)
-        #print similars
+        # print similars
         encoding_edges = []
         for i, similar in enumerate(similars):
             if similar > threshold:
@@ -93,17 +95,20 @@ def chinese_whispers_cluster(encoding_list, threshold=0.30, iterations=20):
     return sorted_clusters
 
 def get_face_features_dic(face_img_dir):
-	face_img_names = os.listdir(face_img_dir)
+    face_img_names = os.listdir(face_img_dir)
     face_features_dic = {}
     for face_img_name in face_img_names:
-        face_img_path = os.path.join(face_img_dir, img_name)
+        face_img_path = os.path.join(face_img_dir, face_img_name)
         face_img = cv2.imread(face_img_path)
         face_feature = lcnn_feature.feature_extract(face_img)
         face_features_dic[face_img_path] = face_feature
     return face_features_dic
 
 if __name__ == '__main__':
-	lcnn_feature.init_model(config.lcnn_face_prototxt, config.lcnn_face_caffemodel)
-	face_features_dic = get_face_features_dic('./data/imgs_test')
-	clusted_faces_dic = chinese_whispers_cluster(face_features_dic)
-	print clusted_faces_dic
+    lcnn_feature.init_model(config.lcnn_face_prototxt, config.lcnn_face_caffemodel)
+    face_features_dic = get_face_features_dic('./data/imgs_test')
+    clusted_faces_dic = chinese_whispers_cluster(face_features_dic)
+    for cluster_item in clusted_faces_dic:
+    	print '--------------------------'
+    	for face_item in cluster_item:
+    		print face_item[0]
