@@ -1,5 +1,6 @@
 import os
 import numpy as np
+os.environ['GLOG_minloglevel'] = '2'
 import cv2
 import caffe
 import scipy

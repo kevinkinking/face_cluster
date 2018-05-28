@@ -5,6 +5,7 @@ import config
 from face_feature import lcnn_feature
 import os
 import cv2
+from sys import argv
 
 def chinese_whispers_cluster(encoding_list, threshold=config.face_similar_threshold, iterations=20):
     # Create graph
@@ -104,11 +105,12 @@ def get_face_features_dic(face_img_dir):
     return face_features_dic
 
 if __name__ == '__main__':
+    face_img_dir = argv[1]
     lcnn_feature.init_model(config.lcnn_face_prototxt, config.lcnn_face_caffemodel)
-    face_features_dic = get_face_features_dic('./data/imgs_test')
+    face_features_dic = get_face_features_dic(face_img_dir)
     clusted_faces_dic = chinese_whispers_cluster(face_features_dic)
-    # print clusted_faces_dic.values()
-    for cluster_item in clusted_faces_dic:
-        print '--------------------------'
+
+    for idx, cluster_item in enumerate(clusted_faces_dic):
+        print '------------'+str(idx+1)+'-------------'
         for face_item in cluster_item:
             print face_item[0]
